@@ -1,0 +1,42 @@
+var express = require('express');
+var router = express.Router();
+var User = require('../models/user');
+var csrf = require('csurf')
+
+/* GET home page. */
+router.get('/', csrf(), function(req, res, next) {
+    //req.session.user='admin';
+    console.log("GET LOGIN");
+    res.render('login.html', { csrfToken: req.csrfToken() });
+    return res.next();
+});
+
+/*router.post('/', function(req, res, next) {
+    console.log("GWREWEJIPWGPFH@PEHP");
+    res.setHeader('Content-Type', 'application/json');
+    User.findOne({username: req.body.username}, function(err, user) {
+        if (user) {
+            //varify password
+            if (user.verifyPassword(req.body.password)) {
+                user.updateLoginDate();
+                req.session.user=user;
+                req.session.save();
+                res.send(JSON.stringify({status: "success"}));
+            }
+            else {
+                res.send(JSON.stringify({status: 'invalid'}));
+                next();
+                throw new Error("Invalid password!")
+            }
+        }
+        else {
+            res.send(JSON.stringify({status: 'invalid'}));
+            next();
+            throw new Error("Object does not exist!")
+        }
+    });
+    //console.log(req.session);
+    //res.status(204).send();
+});*/
+
+module.exports = router;

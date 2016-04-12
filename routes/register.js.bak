@@ -1,0 +1,30 @@
+
+var express = require('express');
+var router = express.Router();
+var User = require('../models/user');
+var urlPattern=require('url-pattern');
+
+router.get('/', function(req, res, next) {
+    res.render('register.html', { title: 'Express' });
+    next()    
+});
+
+
+/*router.post('/', function(req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    User.findOne({username: req.body.username}, function(err, user) {
+        if (user) {
+            res.send(JSON.stringify({status: "already_exists"}));
+            next();
+            throw new Error("User already exists!");
+        }
+        else {
+            res.send(JSON.stringify({status: "ok"}));
+            req.session.user=User.createUser({username: req.body.username, password: req.body.password});
+            req.session.save();
+        }
+        
+    });
+});*/
+
+module.exports = router;

@@ -1,0 +1,10 @@
+<% if (session_user) { %>
+
+<span><a href="#/">Home</a></span> <span><a href="/u/<%= session_user.username %>">Messages</a></span> <span><a href="#logout">Logout</a></span>
+
+
+<% } else { %>
+
+<span><a href="/">Home</a></span> <span><a href="/login">Login</a></span> <span><a href="/register">Register</a></span>
+
+<% } %>

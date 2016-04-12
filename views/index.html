@@ -1,0 +1,190 @@
+<html ng-app="Main">
+    <% include head.html %>
+<body>
+    <% include header.html %>
+    <script src="all.min.js"></script>
+
+    <div ng-view>
+    </div>
+
+
+    <script>
+        angular.module("Main", ['ngRoute', 'ngCookies']).config(function($routeProvider, $locationProvider) {
+                $routeProvider
+                    .when('/', {
+                        templateUrl: 'partials/home.html',
+                        controller: 'homeController'
+                    })
+                    .when('/register', {
+                        templateUrl: 'partials/register.html',
+                        controller: 'registerController'
+                    })
+                    .when('/login', {
+                        templateUrl: 'partials/login.html',
+                        controller: 'loginController'
+                    })
+                    .when('/user/:user', {
+                        templateUrl: '/partials/user.html',
+                        controller: 'userController'
+                    })
+                    .when('/conversation/:id', {
+                        templateUrl: '/partials/conversation.html',
+                        controller: 'conversationController'
+                    })
+                    .otherwise({
+                        templateUrl: 'partials/404.html',
+                        controller: 'default'
+                    });
+                $locationProvider.html5Mode(true);
+            }).controller('default', function($scope, $cookies) {
+                $scope.message="HELLO";
+                console.log('controller');
+                //console.log($cookies.getAll());
+            }).factory('httpRequestInterceptor', function () {
+                return {
+                    request: function (config) {
+                      config.headers['x-csrf-token'] = '<%= csrfToken %>';
+                      return config;
+                    }
+                };
+            }).config(function ($httpProvider) {
+              $httpProvider.interceptors.push('httpRequestInterceptor');
+            }).controller('loginController', function($scope, $http, $location, Session) {
+                console.log("LOGIN CONSTROLLER");
+                $scope.$on('logged in', function(data) {
+                    $location.url('/');
+                });
+                $scope.submit=Session.login;
+                    //$location.url("/");
+                //};
+                //$scope.submit=function() {
+                //    $http.post("/api/login", $scope.user).then(function(res) {console.log(res.data);if (res.data.status=="success") {console.log($scope.user.username);Session.create($scope.user.username)}})
+                    
+                //};
+            }).controller('registerController', function($scope, $http, Session) {
+                console.log("REGISTER CONTROLLER");
+                $scope.submit=function() {
+                    $http.post("/api/register", $scope.user)
+                        .then(function(res) {
+                            if (res.data.status="success") {
+                                Session.username=$scope.user.username;
+                            };
+                        });
+                };
+                $scope.checkUsername=function() {
+                    $http.get("/api/user?username_available="+$scope.user.username).then(function(res) {console.log(res.data)});
+                };
+            }).controller('homeController', function($scope, $http, Session) {
+                console.log("HOME CONTROLLER");
+                $http.get("/api/user?recent_users=10").then(function(res) {
+                    $scope.users=res.data;
+                });
+                
+            }).controller('userController', function($scope, $http, $routeParams, $location, Session) {
+                $scope.isAuthenticated=Session.isAuthenticated;
+                $scope.getUsername=Session.getUsername;
+                $scope.isOwner=function() {
+                    return $routeParams.user==Session.getUsername();
+                };
+                console.log("USER CONTROLLER");
+                $http.get("/api/conversation?recent_conversations=5").then(function(res) {
+                    console.log(res.data);
+                    $scope.conversations=res.data.conversations;
+                });
+                $scope.startConversation=function() {
+                    console.log($routeParams);
+                    $http.post("/api/conversation", $routeParams).then(function(res) {
+                        console.log(res.data);
+                        if (res.data.status=="success") {
+                            $location.path("/conversation/"+res.data.id);
+                        }
+                    });
+                }
+            }).factory('Session', function ($http, $rootScope) {
+                var username=undefined;
+                <% if (session_user) { %>
+                    username="<%= session_user.username %>";
+                <% } %>
+                var service={};
+                service.isAuthenticated=function() {
+                    return username!=null;
+                }
+                service.login=function (credentials) {
+                    return $http.post("/api/login", credentials)
+                        .then(function(res) {
+                            if (res.data.status=="success") {
+                                username=credentials.username
+                                $rootScope.$broadcast('logged in');
+                            }
+                            return res.data;
+                        })
+                    ;
+                }
+                service.logout=function() {
+                    $http.post("/api/logout", {})
+                        .then(function(res) {
+                            console.log(res.data);
+                            if (res.data.status=="success") {
+                                username=undefined;
+                            }
+                        })
+                    ;
+                    
+                }
+                service.getUsername=function() {return username;};
+                
+                return service;
+
+            })
+            
+            .controller('headerController', function($scope, Session) {
+                //$scope.authenticated=false;
+                //$scope.$on('logged in', function(data) {
+                //    $scope.username=Session.username;
+                //    $scope.authenticated=Session.isAuthenticated();
+                //});
+                $scope.isAuthenticated=Session.isAuthenticated;
+                $scope.getUsername=Session.getUsername;
+                $scope.logout=Session.logout;
+                console.log("HEADER CONTEROLLSLER");
+            })
+            
+            .controller('conversationController', function($scope, $http, $routeParams, Session, MessageAPI) {
+                $scope.getMessages=function(args) {
+                    MessageAPI.getMessages(args).then(function(messages) {
+                    $scope.messages=messages;
+                    })
+                };
+                $scope.getMessages({min: 0, max: 10});
+                $scope.username=Session.getUsername();
+                $http.get("/api/message?range=0,10").then(function(res) {console.log(res.data)});
+                $scope.send=function(message) {
+                    MessageAPI.createMessage(Session.getUsername(), message, $routeParams.id).success(function(res) {console.log(res);});
+                };
+                console.log("CONVERSATION CONTROLLERRRRORRORO");
+            })
+            
+            .factory('MessageAPI', function($http) {
+                var service={};
+
+                service.getMessages=function(range) {
+                    return $http.get("/api/message?range="+range.min.toString()+","+range.max.toString()).then(function(res) {console.log(res);return res.data.messages});
+                };
+
+                service.createMessage=function(sender, message, id) {
+                    return $http.post("/api/message", {sender: sender, message: message, conversationId: id});
+                };
+                return service;
+            })
+            
+//            .factory('', function() {
+            
+//            })
+            ;
+            
+         
+            
+            
+    </script>
+</body>
+</html>

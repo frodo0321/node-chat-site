@@ -1,0 +1,7 @@
+LOGIN
+<form action='/login' method='post'>
+    <input type='hidden' name='_csrf' value='<%= csrfToken %>' />
+    Username: <input type='text' name='username' />
+    Password: <input type='password' name='password' />
+    <input type='submit' value='Submit!' />
+</form>

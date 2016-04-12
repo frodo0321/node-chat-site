@@ -1,0 +1,31 @@
+<div>
+    <form action='/register' method='post'>
+        <input type='hidden' name='_csrf' value='<%= csrfToken %>' />
+        <span>Username: </span><input type='text' name='username' ng-model='username' ng-change='test()' ng-model-options="{debounce: 500}" />
+        <span>Password: </span><input type='password' name='password' ng-model='password' />
+        <input type='submit' value='submit' />
+    </form>
+    {{ username }}{{password}}
+</div>
+<script>
+/*        angular.module("test", [])
+    .controller("Controller", function($scope, $http) {
+        $http.get("/user?username_available=Bob").then(function(data) {console.log(data)});
+        $scope.test=function() {console.log("CHANGE")};
+    })
+    .directive('registerUsername', function(){
+        return {
+            require:'ngModel',
+            link: function(scope, elem, attrs, ctrl){
+                ctrl.$parsers.unshift(function (val) {
+                        
+                        ctrl.$setValidity('registerUsername', false);
+                        return val;
+                    });
+                }
+        }
+    })
+;
+
+*/
+</script>

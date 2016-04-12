@@ -1,0 +1,19 @@
+<div ng-switch on="isAuthenticated()">
+    <div ng-switch-when="true">
+        <div ng-switch on="isOwner()">
+            <div ng-switch-when="true">
+                <div ng-repeat="convo in conversations">
+                    <a href="/conversation/{{ convo.id }}">{{ convo.name }}</a>
+                </div>
+            </div>
+            <div ng-switch-when="false">
+                <button ng-click="startConversation()">Start Conversation!</button>
+            </div>
+        </div>
+    </div>
+    <div ng-switch-when="false">
+        <p>Login or register to chat!</p>
+    </div>
+</div>
+
+

@@ -1,0 +1,9 @@
+<div>
+    <form ng-submit="submit(user)">
+        <span>Username: </span><input type='text' name='username' ng-model='user.username' ng-minlength='2' ng-maxlength='20' ng-change='checkUsername()' ng-model-options="{debounce: 500}" register-username />
+        <span>Password: </span><input type='password' name='password' ng-model='user.password' />
+        <span>Confirm Password: </span><input type='password' name='confirm' ng-model='user.confirm' />
+        <input type='submit' value='Register!' />
+    </form>
+    {{ username }}{{password}}
+</div>

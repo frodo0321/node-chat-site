@@ -1,0 +1,18 @@
+<% include header.html %>
+<% if (session_user) { %>
+    USER <%= session_user.username %>
+    <% if (conversations) { %>
+        <p>Conversations:</p>
+        <ul>
+        <% for(var i=0;i<conversations.length;i++) { %>
+            <li><a href="/c/<%= conversations[i]._id %>"><%= conversations[i].name %></a></li>
+        <% } %>
+        </ul>
+    <% } else { %>
+        No Conversations!
+    <% } %>
+
+<% } else { %>
+    HELLO
+<% } %>
+

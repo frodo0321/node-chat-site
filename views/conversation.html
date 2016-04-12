@@ -1,0 +1,36 @@
+<div>
+<h2>
+CONVERSATION
+</h2>
+
+<!--
+<% if (conversation) { %>
+    <p><%= conversation.name %></p>
+    <p>Messages:</p>
+    <% if (messages) { %>
+        <div style="height:50%; overflow-y: scroll">
+            <ul>
+            <% for(var i=0;i<messages.length;i++) { %>
+                <li><p><%= messages[i].sender.username %></p><%= messages[i].timestamp %><p><%= messages[i].message %></p></li>
+            <% } %>
+            </ul>
+        </div>
+        <div>
+            <form action='/c/<%= conversation._id %>' method="post">
+                <input type='hidden' name='_csrf' value='<%= csrfToken %>' />
+                <input type='text' name='message' />
+                <input type='submit' value='Send' />
+                
+            </form>
+        </div>
+    <% } else { %>
+        No Messages!
+    <% } %>
+
+
+
+<% } else { %>
+    Error!
+<% } %> 
+-->
+</div>

@@ -1,0 +1,51 @@
+<html ng-app="Main">
+    <% include head.html %>
+<body>
+    <% include header.html %>
+    <script src="all.min.js"></script>
+
+    <div ng-view>
+    </div>
+
+
+    <script>
+        angular.module("Main", ['ngRoute']).config(function($routeProvider, $locationProvider) {
+                $routeProvider
+                    .when('/', {
+                        templateUrl: 'partials/home.html',
+                        controller: 'default'
+                    })
+                    .when('/register', {
+                        templateUrl: 'partials/register.html',
+                        controller: 'default'
+                    })
+                    .when('/login', {
+                        templateUrl: 'partials/login.html',
+                        controller: 'default'
+                    })
+                    .otherwise({
+                        templateUrl: 'partials/404.html',
+                        controller: 'default'
+                    });
+                $locationProvider.html5Mode(true);
+            }).controller('default', function($scope) {
+                $scope.message="HELLO";
+                console.log('controller');
+            });
+            
+            
+    </script>
+<!--<% if (session_user) {%>
+Welcome, <%= session_user.username %>!
+<% } %>
+
+<% if (users) { %>
+    users:
+    <% for (var i=0;i<users.length; i++) {%>
+        <a href="<%= users[i].username %>"><%= users[i].username %></a>
+    <% } %>
+<% } else { %>
+    no users
+<% } %>-->
+</body>
+</html>
